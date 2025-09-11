@@ -1,0 +1,62 @@
+START
+	INITIALIZE WORLD
+		RoomsList = {[Entrance, Description], [Library, Description], etc}
+		ItemsList = {[Potion, Effect], [Golden Key, Game Win], etc}
+		World = RANDOMIZE(RoomsList)
+		WorldItems = RANDOMIZE(ItemsList)
+		DISTRIBUTE(WorldItems INTO World)
+		GoldenKeyRoom = World(Room containing "Golden Key")
+
+		FOR each Room in World
+			ASSIGN directions(north, east, south, west)
+			ENSURE each Room is connected
+			ENSURE Entrance is connected to at least 2 rooms
+
+	INITIALIZE PLAYER
+		PlayerLocation = World[Entrance]
+		PlayerInventory = {}
+		MovesLeft = LENGTH(World) + 3
+		Victory = FALSE
+
+	LOOP START (WHILE MovesLeft > 0 AND Victory = FALSE)
+		DISPLAY PlayerLocation Description FROM RoomsList
+		DISPLAY Items IN PlayerLocation
+		DISPLAY PlayerChoices
+		PROMPT "What is your move?"
+
+		IF INPUT = "go [direction]"
+			IF direction EXISTS
+				MOVE Playerlocation TO Room
+				MovesLeft = MovesLeft - 1
+			ELSE
+				PROMPT "You can not go that direction."
+
+		ELIF INPUT = "take [item]"
+			IF Item IN PlayerLocation
+				ADD Item to PlayerInventory
+				REMOVE Item FROM Room
+				IF Item = "Golden Key"
+					Victory = TRUE
+			ELSE
+				PROMPT "That item is not in this room."
+
+		ELIF INPUT = "use [item]"
+			IF Item IN PlayerInventory
+				APPLY ItemEffect FROM ItemsList
+
+		ELIF INPUT = "inventory"
+			DISPLAY PlayerInventory
+
+		ELIF INPUT = "look"
+			DISPLAY PlayerLocation Description FROM RoomsList
+
+		ELSE
+			DISPLAY "Invalid command."
+
+	IF Victory = TRUE
+		DISPLAY VictoryMessage
+
+	ELIF MovesLeft = 0
+		DISPLAY LossMessage
+
+END
