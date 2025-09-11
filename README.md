@@ -39,7 +39,7 @@ Submission Requirements
 
 ## ❓ Methodology
 
-![image]()
+![image](https://github.com/jam-esss/adventure-game-project/blob/main/description/Programming%20Methodology.png?raw=true)
 
 ## ⬇️ Installation
 
