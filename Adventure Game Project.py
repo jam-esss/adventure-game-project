@@ -216,6 +216,74 @@ def difficultySelect():  #Function for difficulty selection.
             print(textEffects("Invalid input, please try again.\n", colour="NEGATIVE"))
 difficultySelect()
 
+##Game functions.
+def printRoom(roomName):  #Displays current room's description
+    room = roomsList[roomName]
+    print(f"\nLocation: {roomName}\n{room['description']}\n")
+
+def handleTrap(currentRoom):  #Handles traps in the player's room.
+    while currentRoom["trap"] is not None:
+        trap = trapsList[currentRoom["trap"]]
+        print(trap["description"] + "\n")
+        #If player has an EMP, give them the choice to use it.
+        if "EMP" in Player["Inventory"]:
+            useEMP = textEffects(input(
+                "You have an EMP in your inventory, would you like to use it? (Y/N)\n» "), clean=True)
+            if useEMP in ["y", "yes"]:  #Uses EMP to disable trap.
+                print(trap["dodge"] + "\n")
+                Player["Inventory"].remove("EMP")
+                currentRoom["trap"] = None
+                break  
+            elif useEMP in ["n", "no"]:  #EMP not used, trap affects player.
+                print(trap["detect"] + "\n")
+                Player["MovesLeft"] -= trap["decrementMoves"]
+                break  #Trap stays active
+            else:
+                print("Invalid input. Please enter Y or N.")
+        #If player doesn't have EMP, trap affects player.
+        else:
+            print(trap["detect"] + "\n")
+            Player["MovesLeft"] -= trap["decrementMoves"]
+            break
+
+def choiceHandler(choice, currentRoom): #Handles player choices.
+    #Help menu.
+    if choice == "help":
+        print(textEffects(
+        """
+        Commands:
+        > 'Go [direction]'
+        > 'Take [item]'
+        > 'Use [item]'
+        > 'Inventory'
+        > 'Look'
+        """,
+        colour = "PROMPT"))
+        
+    #Go command (to move between rooms).
+    elif choice.startswith("go "):
+        direction = choice[3:].capitalize()
+        if direction in currentRoom["directions"]:
+            Player["Room"] = currentRoom["directions"][direction]
+            Player["MovesLeft"] -= 1
+        else:
+            print(textEffects("Invalid direction. Please try again.\n", colour="NEGATIVE"))
+
+    #Take command (to pick up items).
+    elif choice.startswith("take "):
+        item = textEffects(choice[5:], clean=True)
+        foundItem = None
+        for roomItem in currentRoom["items"]:
+            if textEffects(roomItem, clean=True) == item:
+                foundItem = roomItem
+                break
+        if foundItem:
+            Player["Inventory"].append(foundItem)
+            currentRoom["items"].remove(foundItem)
+            print(textEffects(f"You have picked up: {item}\n", colour="PROMPT"))
+        else:
+            print(textEffects("Invalid item. Please try again.\n", colour="NEGATIVE"))
+
 ##Game start.
 print(textEffects(  #Introduction / lore text.
 f"""
@@ -227,33 +295,14 @@ colour="SPEECH", typewriter=True
 ))
 time.sleep(1)
 
+##Main loop.
 while Player["MovesLeft"] > 0 and not Player["Victory"]:  #While player has moves and hasn't won:
-    #Display current room's description.
     currentRoom = roomsList[Player["Room"]]
-    print(f"Location: {Player['Room']}\n" + currentRoom["description"] + "\n")
+    #Room description function.
+    printRoom(Player["Room"])
 
-    #Show traps in the room.
-    while currentRoom["trap"] is not None:
-        print(trapsList[currentRoom["trap"]]["description"] + "\n")
-        #If player has an item, allow them to disable trap.
-        if "EMP" in Player["Inventory"]:
-            useEMP = textEffects(input(
-                "You have an EMP in your inventory, would you like to use it? (Y/N)\n» "), clean=True)
-            if useEMP in ["y", "yes"]:  #If the player uses an item:
-                print(trapsList[currentRoom["trap"]]["dodge"] + "\n")
-                Player["Inventory"].remove("EMP")
-                currentRoom["trap"] = None
-            elif useEMP in ["n", "no"]:  #If the player doesn't use an item:
-                print(trapsList[currentRoom["trap"]]["detect"] + "\n")
-                Player["MovesLeft"] -= trapsList[currentRoom["trap"]]["decrementMoves"]
-                break #Exit loop and keep trap in world.
-            else:
-                print("Invalid input.")
-        #If the player can't disable the trap, they get hit.
-        else:
-            print(trapsList[currentRoom["trap"]]["detect"] + "\n")
-            Player["MovesLeft"] -= trapsList[currentRoom["trap"]]["decrementMoves"]
-            break
+    #Trap handler function.
+    handleTrap(currentRoom)
 
     #Show items in the room.
     if currentRoom["items"]:
@@ -263,21 +312,13 @@ while Player["MovesLeft"] > 0 and not Player["Victory"]:  #While player has move
     print("You can go: " + ", ".join(currentRoom["directions"].keys()) + "\n" + 
           f"Moves left: {Player['MovesLeft']}\n")
 
-    #Get player's choice.
+    #Get player's choice / handle it.
     choice = textEffects(input(
-        "What would you like to do?\nType 'Help' for all commands.\n» "), clean=True)
-    
-    #Help menu.
-    if choice == "help":
-        print("""
-            Commands:
-              - 'Go [direction]'
-              - 'Take [item]'
-              - 'Use [item]'
-              - 'Inventory'
-              - 'Look'
-              """)
-
-    Player["Victory"] = True #Temporary, prevents memory leak.
+        "What's your next move?\nType 'Help' for all commands.\n» "), 
+        clean=True)
+    choiceHandler(choice, currentRoom)
 
 exitInput = input("Press enter to exit.")
+#Bugs: 
+    #If an invalid command is entered while a trap is present, the moves will deduct every loop.
+    #Traps minusing 3 moves instead of 2.
