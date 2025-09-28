@@ -41,7 +41,6 @@ def textEffects(text, colour="DEFAULT", clean=False, typewriter=False):
             sys.stdout.flush()
             time.sleep(0.05)
         return ""
-    
     return colouredText
 
 ##World setup. References:
@@ -187,6 +186,8 @@ Player = {
     "Room": "Entrance",
     "Inventory": [],
     "MovesLeft": 0,
+    "hasKey1": False,
+    "hasKey2": False,
     "Victory": False,
 }
 def difficultySelect():  #Function for difficulty selection.
@@ -221,7 +222,7 @@ def printRoom(roomName):  #Displays current room's description
     room = roomsList[roomName]
     print(f"\nLocation: {roomName}\n{room['description']}\n")
 
-def handleTrap(currentRoom):  #Handles traps in the player's room.
+def trapHandler(currentRoom):  #Handles traps in the player's room.
     while currentRoom["trap"] is not None:
         trap = trapsList[currentRoom["trap"]]
         print(trap["description"] + "\n")
@@ -237,7 +238,7 @@ def handleTrap(currentRoom):  #Handles traps in the player's room.
             elif useEMP in ["n", "no"]:  #EMP not used, trap affects player.
                 print(trap["detect"] + "\n")
                 Player["MovesLeft"] -= trap["decrementMoves"]
-                break  #Trap stays active
+                break  #Trap stays active.
             else:
                 print("Invalid input. Please enter Y or N.")
         #If player doesn't have EMP, trap affects player.
@@ -250,20 +251,29 @@ def choiceHandler(choice, currentRoom): #Handles player choices.
     #Help menu.
     if choice == "help":
         print(textEffects(
-        """
-        Commands:
-        > 'Go [direction]'
-        > 'Take [item]'
-        > 'Use [item]'
-        > 'Inventory'
-        > 'Look'
-        """,
-        colour = "PROMPT"))
+"""
+Commands:
+> 'Go [direction]'
+> 'Take [item]'
+> 'Use [item]'
+> 'Inventory'
+> 'Look'
+""",
+        colour = "PROMPT", typewriter=True))
+        time.sleep(1)
         
     #Go command (to move between rooms).
     elif choice.startswith("go "):
         direction = choice[3:].capitalize()
         if direction in currentRoom["directions"]:
+            #If the direction is the vault, check for keys.
+            if currentRoom["directions"][direction] == "Vault":
+                if not (Player["hasKey1"] and Player["hasKey2"]):
+                    print(textEffects(
+                        "The vault is locked, you need both vault keys to enter.\n", 
+                        colour="PROMPT"))
+                    return
+            #Otherwise, move the player.
             Player["Room"] = currentRoom["directions"][direction]
             Player["MovesLeft"] -= 1
         else:
@@ -281,14 +291,58 @@ def choiceHandler(choice, currentRoom): #Handles player choices.
             Player["Inventory"].append(foundItem)
             currentRoom["items"].remove(foundItem)
             print(textEffects(f"You have picked up: {item}\n", colour="PROMPT"))
+            #Check for vault keys / golden key.
+            if foundItem == "Vault Key 1":
+                Player["hasKey1"] = True
+            elif foundItem == "Vault Key 2":
+                Player["hasKey2"] = True
+            elif foundItem == "Golden Key":
+                Player["Victory"] = True
         else:
             print(textEffects("Invalid item. Please try again.\n", colour="NEGATIVE"))
 
+    #Use command (to use items in inventory).
+    elif choice.startswith("use "):
+        item = textEffects(choice[4:], clean=True)
+        foundItem = None
+        for invItem in Player["Inventory"]:
+            if textEffects(invItem, clean=True) == item:
+                foundItem = invItem
+                break
+        if foundItem:
+            if foundItem == "Quickhack":
+                Player["MovesLeft"] += 1
+                Player["Inventory"].remove("Quickhack")
+                print(textEffects(
+                    "You use the Quickhack, halting HelixCore's tracking momentarily.\nYou gain 1 extra move.\n",
+                    colour="POSITIVE"
+                ))
+
+    #Inventory command (to view inventory).
+    elif choice == "inventory":
+        if Player["Inventory"]:
+            print("Your inventory contains: " + ", ".join(Player["Inventory"]) + "\n")
+        else:
+            print("Your inventory is empty.\n")
+
+    #Look command (describes the room).
+    elif choice == "look":
+        print(currentRoom["description"] + "\n")
+        if currentRoom["items"]:
+            print("You see the following items: " + ", ".join(currentRoom["items"]) + "\n")
+        else:
+            print("There are no items in this room.\n")
+    
+    #Invalid command otherwise.
+    else:
+        print(textEffects("Invalid command, please try again.\n", colour="NEGATIVE"))
+
 ##Game start.
-print(textEffects(  #Introduction / lore text.
+print(textEffects(
 f"""
 > Your goal, runner, is to infiltrate HelixCore's datacentre and retrieve the golden key from their vault.
 > Beware though, HelixCore will quickly notice your presence once you're inside.
+> Be sure to <<look>> around each room and <<take>> any useful items you find.
 > You will only get <<{Player['MovesLeft']}>> moves to complete your mission, so plan wisely. Good luck.
 """, 
 colour="SPEECH", typewriter=True
@@ -302,11 +356,7 @@ while Player["MovesLeft"] > 0 and not Player["Victory"]:  #While player has move
     printRoom(Player["Room"])
 
     #Trap handler function.
-    handleTrap(currentRoom)
-
-    #Show items in the room.
-    if currentRoom["items"]:
-        print("You see the following items: " + ", ".join(currentRoom["items"]) + "\n")
+    trapHandler(currentRoom)
 
     #Show directions & moves left.
     print("You can go: " + ", ".join(currentRoom["directions"].keys()) + "\n" + 
@@ -318,7 +368,21 @@ while Player["MovesLeft"] > 0 and not Player["Victory"]:  #While player has move
         clean=True)
     choiceHandler(choice, currentRoom)
 
+#Check for victory condition.
+if Player["Victory"]:
+    print(textEffects(
+f"""
+> *You hold the golden key in your hands, feeling its weight and power.*
+> Great job runner, your mission was successful with {Player['MovesLeft']} moves to spare.
+> Now, get yourself out of there swiftly.
+""", colour="POSITIVE", typewriter=True))
+
+else:
+    print(textEffects(
+"> HelixCore have managed to locate your position, you need to get out of there, now. Game over.", 
+colour="NEGATIVE", typewriter=True))
+        
 exitInput = input("Press enter to exit.")
+
 #Bugs: 
-    #If an invalid command is entered while a trap is present, the moves will deduct every loop.
-    #Traps minusing 3 moves instead of 2.
+    #If player is in room with a trap and uses a command, the trap triggers again.
