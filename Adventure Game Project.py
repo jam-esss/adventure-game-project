@@ -47,32 +47,42 @@ def textEffects(text, colour="DEFAULT", clean=False, typewriter=False):
   #https://www.w3schools.com/python/python_dictionaries.asp
 roomsList = {  #List of rooms and their details.
     "Entrance": {  #Start location. No traps or items.
-        "description": textEffects("You stand outside HelixCore's datacentre. The building is guarded, but you slip past into the side entrance.", colour="PROMPT"),
+        "description": textEffects(
+            "You stand outside HelixCore's datacentre. The building is guarded, but you slip past into the side entrance.", 
+            colour="PROMPT"),
         "directions": {"Forward": "Lobby"},
         "items": [],
         "trap": None,
     },
     "Lobby": {
-        "description": textEffects("You stand in the main lobby of HelixCore- no staff, just the piercing silence and an empty front desk.", colour="PROMPT"),
+        "description": textEffects(
+            "You stand in the main lobby of HelixCore- no staff, just the piercing silence and an empty front desk.", 
+            colour="PROMPT"),
         "directions": {"Back": "Entrance", "Left": "Staff Offices", "Right": "Security Office"},
         "items": [],
         "trap": None,
     },
 
     "Staff Offices": {
-        "description": textEffects("You enter the staff offices. Empty desks surround you with the dull sound of computers whirring.", colour="PROMPT"),
+        "description": textEffects(
+            "You enter the staff offices. Empty desks surround you with the dull sound of computers whirring.", 
+            colour="PROMPT"),
         "directions": {"Back": "Lobby", "Left": "Break Room", "Right": "Manager's Office"},
         "items": [],
         "trap": None,
     },
     "Break Room": {
-        "description": textEffects("You peek inside the employee break room, the smell of stale coffee overwhelming you.", colour="PROMPT"),
+        "description": textEffects(
+            "You peek inside the employee break room, the smell of stale coffee overwhelming you.", 
+            colour="PROMPT"),
         "directions": {"Back": "Staff Offices"},
         "items": [],
         "trap": None,
     },
     "Manager's Office": {
-        "description": textEffects("Surprisingly, the manager's office is left unlocked. Just a desk and dull company mottos stand inside.", colour="PROMPT"),
+        "description": textEffects(
+            "Surprisingly, the manager's office is left unlocked. Just a desk and dull company mottos stand inside.", 
+            colour="PROMPT"),
         "directions": {"Back": "Staff Offices"},
         "items": [],
         "trap": None,
@@ -80,45 +90,59 @@ roomsList = {  #List of rooms and their details.
 
 
     "Security Office": {
-        "description": textEffects("The security office glows bright with monitors watching every angle of the vault.", colour="PROMPT"),
+        "description": textEffects(
+            "The security office glows bright with monitors watching every angle of the vault.", 
+            colour="PROMPT"),
         "directions": {"Back": "Lobby", "Left": "Server Room", "Forward": "CCTV Data Room", "Right": "Supply Closet"},
         "items": [],
         "trap": None,
     },
     "CCTV Data Room": {
-        "description": textEffects("Screens and racks whir, recording every movement outside the building.", colour="PROMPT"),
+        "description": textEffects(
+            "Screens and racks whir, recording every movement outside the building.", 
+            colour="PROMPT"),
         "directions": {"Back": "Server Room", "Left": "Server Room"},
         "items": [],
         "trap": None,
     },
     "Supply Closet": {
-        "description": textEffects("Nothing interesting here, just cleaning tools and dust.", colour="PROMPT"),
+        "description": textEffects(
+            "Nothing interesting here, just cleaning tools and dust.", 
+            colour="PROMPT"),
         "directions": {"Back": "Security Office"},
         "items": [],
         "trap": None,
     },
 
     "Server Room": {
-        "description": textEffects("You slip undetected into the server room. Server racks hum around you.", colour="PROMPT"),
+        "description": textEffects(
+            "You slip undetected into the server room. Server racks hum around you.", 
+            colour="PROMPT"),
         "directions": {"Back": "Security Office", "Left": "Data Backup", "Right": "CCTV Data Room", "Forward": "Server Cooling Room"},
         "items": [],
         "trap": None,
     },
     "Data Backup": {
-        "description": textEffects("The exact same layout as the server room, backing up the data from those servers.", colour="PROMPT"),
+        "description": textEffects(
+            "The exact same layout as the server room, backing up the data from those servers.", 
+            colour="PROMPT"),
         "directions": {"Back": "Server Room", "Forward": "Vault"},
         "items": [],
         "trap": None,
     },
     "Server Cooling Room": {
-        "description": textEffects("Pumps whine, pushing coolant into the previous room.", colour="PROMPT"),
+        "description": textEffects(
+            "Pumps whine, pushing coolant into the previous room.", 
+            colour="PROMPT"),
         "directions": {"Back": "Server Room", "Forward": "Vault"},
         "items": [],
         "trap": None,
     },
 
     "Vault": {  #Location of the golden key. No traps or directions as the key ends the game.
-        "description": textEffects("You stand in HelixCore's vault, the golden key glistening in the centre of the room.", colour="PROMPT"),
+        "description": textEffects(
+            "You stand in HelixCore's vault, the golden key glistening in the centre of the room.", 
+            colour="PROMPT"),
         "directions": {},
         "items": ["Golden Key"],
         "trap": None,
@@ -127,19 +151,27 @@ roomsList = {  #List of rooms and their details.
 
 itemsList = {  #List of items and their details.
     "EMP": {
-        "description": textEffects("A single electromagnetic pulse. Good for removing traps.", colour="ITEM"),
+        "description": textEffects(
+            "A single electromagnetic pulse. Good for removing traps.", 
+            colour="ITEM"),
         "effects": "Disable one trap.",
     },
     "Quickhack": {
-        "description": textEffects("Hack HelixCore's security protocol once, slows their tracking.", colour="ITEM"),
+        "description": textEffects(
+            "Hack HelixCore's security protocol once, slows their tracking.", 
+            colour="ITEM"),
         "effects": "Grants 1 extra move.",
     },
     "Vault Key 1": {
-        "description": textEffects("A glowing key, with the number 1 etched onto it.", colour="ITEM"),
+        "description": textEffects(
+            "A glowing key, with the number 1 etched onto it.", 
+            colour="ITEM"),
         "effects": "Vault Key 1.",
     },
     "Vault Key 2": {
-        "description": textEffects("A glowing key, with the number 2 etched onto it.", colour="ITEM"),
+        "description": textEffects(
+            "A glowing key, with the number 2 etched onto it.", 
+            colour="ITEM"),
         "effects": "Vault Key 2.",
     },
     #Golden key is not here as it only spawns in the vault.
@@ -148,34 +180,57 @@ itemsList = {  #List of items and their details.
 trapsList = {  #List of traps and their details.
     #Dodge is for using an item to disable the trap.
     #Detect is for not using / not having an item to disable the trap.
+    #DecrementMoves is how many moves the trap deducts from the player.
     "CCTV": {
-        "description": textEffects("As you enter, you look to the ceiling and spot a CCTV camera swivelling your way.", colour="NEUTRAL"),
-        "dodge": textEffects("You act quickly, disabling the camera before it can spot you.", colour="POSITIVE"),
-        "detect": textEffects("The camera spots you, immediately flagging security.\nLose 1 move.", colour="NEGATIVE"),
+        "description": textEffects(
+            "As you enter, you look to the ceiling and spot a CCTV camera swivelling your way.", 
+            colour="NEUTRAL"),
+        "dodge": textEffects(
+            "You act quickly, disabling the camera before it can spot you.", 
+            colour="POSITIVE"),
+        "detect": textEffects(
+            "The camera spots you, immediately flagging security.\nLose 1 move.", 
+            colour="NEGATIVE"),
         "decrementMoves": 1,
     },
     "Tripwire Alarm": {
-        "description": textEffects("You step into the room, noticing that you have stepped into a tripwire.", colour="NEUTRAL"),
-        "dodge": textEffects("You disable the tripwire, allowing you to progress.", colour="POSITIVE"),
-        "detect": textEffects("You step into the tripwire, alerting security to your presence.\nLose 2 moves.", colour="NEGATIVE"),
+        "description": textEffects(
+            "You step into the room, noticing that you have stepped into a tripwire.", 
+            colour="NEUTRAL"),
+        "dodge": textEffects(
+            "You disable the tripwire, allowing you to progress.", 
+            colour="POSITIVE"),
+        "detect": textEffects(
+            "You step into the tripwire, alerting security to your presence.\nLose 2 moves.", 
+            colour="NEGATIVE"),
         "decrementMoves": 2,
     },
     "Laser Grid": {
-        "description": textEffects("You vaguely notice a laser grid blocking your path.", colour="NEUTRAL"),
-        "dodge": textEffects("You hastily disable the laser grid, unblocking your path.", colour="POSITIVE"),
-        "detect": textEffects("You trigger the laser grid, causing a silent alarm.\nLose 2 moves.", colour="NEGATIVE"),
+        "description": textEffects(
+            "You vaguely notice a laser grid blocking your path.", 
+            colour="NEUTRAL"),
+        "dodge": textEffects(
+            "You hastily disable the laser grid, unblocking your path.", 
+            colour="POSITIVE"),
+        "detect": textEffects(
+            "You trigger the laser grid, causing a silent alarm.\nLose 2 moves.", 
+            colour="NEGATIVE"),
         "decrementMoves": 2,
     },
 }
 
 #Randomly place items and traps in the rooms. References:
   #https://www.w3schools.com/python/ref_random_sample.asp
-availableRooms = [room for room in roomsList.keys() if room not in ["Entrance", "Lobby", "Vault"]]  #Excludes the first two rooms and vault.
+availableRooms = [
+    room for room in roomsList.keys() if room not in ["Entrance", "Lobby", "Vault"]
+    ]  #Excludes the first two rooms and vault.
 
+#Distribute items throughout the rooms randomly.
 itemRooms = random.sample(availableRooms, len(itemsList))
 for i, item in enumerate(itemsList.keys()):
     roomsList[itemRooms[i]]["items"].append(item)
 
+#Add 2 traps to random rooms.
 trapRooms = random.sample(availableRooms, 2)
 for room in trapRooms:
     trap = random.choice(list(trapsList.keys()))
@@ -186,9 +241,11 @@ Player = {
     "Room": "Entrance",
     "Inventory": [],
     "MovesLeft": 0,
-    "hasKey1": False,
+    "LastRoom": None,  #To make traps only trigger once per room.
+
+    "hasKey1": False,  #Vault keys to unlock vault.
     "hasKey2": False,
-    "Victory": False,
+    "Victory": False,  #Victory condition (having the golden key).
 }
 def difficultySelect():  #Function for difficulty selection.
     while True:
@@ -355,8 +412,10 @@ while Player["MovesLeft"] > 0 and not Player["Victory"]:  #While player has move
     #Room description function.
     printRoom(Player["Room"])
 
-    #Trap handler function.
-    trapHandler(currentRoom)
+    #Trap handler.
+    if Player.get("LastRoom") != Player["Room"]:
+        trapHandler(currentRoom)
+        Player["LastRoom"] = Player["Room"]
 
     #Show directions & moves left.
     print("You can go: " + ", ".join(currentRoom["directions"].keys()) + "\n" + 
@@ -375,7 +434,8 @@ f"""
 > *You hold the golden key in your hands, feeling its weight and power.*
 > Great job runner, your mission was successful with {Player['MovesLeft']} moves to spare.
 > Now, get yourself out of there swiftly.
-""", colour="POSITIVE", typewriter=True))
+""", 
+colour="POSITIVE", typewriter=True))
 
 else:
     print(textEffects(
@@ -384,5 +444,7 @@ colour="NEGATIVE", typewriter=True))
         
 exitInput = input("Press enter to exit.")
 
-#Bugs: 
-    #If player is in room with a trap and uses a command, the trap triggers again.
+#Bugs:
+    #If player uses a command that doesn't use a move (i.e. inventory) in a room
+    #with a trap, the trap will trigger again.
+    #Fixed by adding "LastRoom" to Player dictionary and comparing it to current room.
