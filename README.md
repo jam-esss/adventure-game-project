@@ -49,7 +49,7 @@ https://www.python.org/downloads/
 ## ❗ Preview
 (More previews in the screenshots folder!)
 
-![image]()
+![image](https://github.com/jam-esss/adventure-game-project/blob/main/screenshots/difficultyselect.png?raw=true)
 
 ## 📊 Grade / Feedback
 
