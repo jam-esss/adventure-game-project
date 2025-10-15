@@ -53,7 +53,15 @@ https://www.python.org/downloads/
 
 ## 📊 Grade / Feedback
 
-TBA
+Overall - 68%
+
+Knowledge and understanding of the topic/issues - Distinction
+
+Application of theory to practice and or real-world example - Merit
+
+Structure and Presentation - Distinction
+
+Reading and Referencing - Merit
 
 ## ✍️ Authors
 
